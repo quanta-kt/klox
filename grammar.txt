@@ -1,0 +1,63 @@
+program -> declaration* EOF ;
+
+declaration -> funDecl
+             | classDecl
+             | varDecl
+             | statement ;
+
+funDecl     -> "fun" function ;
+function    -> IDENTIFIER "(" parameters? ")" block ;
+paramters   -> IDENTIFIER, ( "," IDENTIFIER )* ;
+
+classDecl   -> "class" IDENTIFIER ( < IDENTIFIER )? "{" function* "}" ;
+
+varDecl     -> "var" IDENTIFIER ( "=" expression )? ";" ;
+
+statement   -> exprStmt
+             | ifStmt
+             | whileStmt
+             | forStmt
+             | printStmt
+             | block
+             | return ;
+
+ifStmt      -> "if" "(" expression ")" statement
+                ( "else" statement )? ;
+
+whileStmt   -> "while" "(" expression ")" statement ;
+
+forStmt     -> "for" "("
+                ( varDecl | exprStmt | ";" )
+                expression? ";"
+                expression? ")"
+                statement ;
+
+exprStmt    -> expression ";" ;
+
+printStmt   -> "print" expression ";" ;
+
+block       -> "{" declaration* "}" ;
+
+expression  -> lambda | assignment ;
+
+lambda      -> "fun" "(" parameters? ")" block ;
+
+assignment  -> (call ".")? IDENTIFIER "=" assignment
+               | logic_or ;
+
+logic_or    -> logic_and ( "or" logic_and )* ;
+logic_and   -> equality ( "and" equality )* ;
+
+unary       -> ( "!" | "-" ) unary | call;
+
+call        -> primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
+
+arguments   -> expression ( "," expression )* ;
+return      -> "return" expression? ;
+
+primary     -> "true" | "false" | "nil"
+             | NUMBER | STRING
+             | "(" expression ")"
+             | "super" "." IDENTIFIER
+             | IDENTIFIER ;
+
